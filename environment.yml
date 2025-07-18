@@ -1,0 +1,8 @@
+name: advent-of-code-2024
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13.5
+  - pip=25.0.0
+  - pip:
+      - pytest==8.4.1
