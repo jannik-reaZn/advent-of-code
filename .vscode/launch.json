@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (WSL)",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": ["build"],
+        "filter": {
+          "kind": "bin"
+        }
+      },
+      "program": "${cargo:program}",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

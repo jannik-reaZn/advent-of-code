@@ -1,5 +1,9 @@
 {
   "python.testing.pytestArgs": ["."],
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+  "rust-analyzer.restartServerOnConfigChange": true
+  // "rust-analyzer.runnables.extraEnv": {
+  //   "PATH": "${env:HOME}/.cargo/bin:${env:PATH}"
+  // }
 }
