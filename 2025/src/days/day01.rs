@@ -48,7 +48,7 @@ pub fn apply_rotation_to_dial(dial: i32, rotation: &(&str, i32)) -> i32 {
     // Apply rotation and use rem_euclid to handle any rotation size and negative values
     // rem_euclid ensures the result is always in the range [0, modulus)
     let new_position = (dial + rotation_amount).rem_euclid(DIAL_MAX_NUMBER_OF_POSITIONS + 1);
-    
+
     new_position
 }
 
@@ -72,18 +72,18 @@ mod tests {
 
     #[test]
     fn test_apply_rotation_to_dial_under_limit() {
-        let current_position= 42;
+        let current_position = 42;
         let rotation = ("L", 43);
         assert_eq!(apply_rotation_to_dial(current_position, &rotation), 99);
     }
-    
+
     #[test]
     fn test_apply_rotation_to_dial_over_limit() {
-      let current_position = 98;
-      let rotation = ("R", 5);
-      assert_eq!(apply_rotation_to_dial(current_position, &rotation), 3);
+        let current_position = 98;
+        let rotation = ("R", 5);
+        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 3);
     }
-    
+
     #[test]
     fn test_part2_example() {
         let input = "your test input here";
@@ -154,5 +154,4 @@ mod tests {
         ";
         assert_eq!(part1(input), 3);
     }
-
 }
