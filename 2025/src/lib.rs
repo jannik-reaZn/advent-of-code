@@ -2,7 +2,6 @@
 pub mod days;
 
 use std::fs;
-use std::path::Path;
 
 /// Read input file for a specific day
 pub fn read_input(day: u8) -> String {
