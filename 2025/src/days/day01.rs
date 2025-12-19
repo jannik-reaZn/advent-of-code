@@ -5,10 +5,20 @@
 
 const DIAL_MAX_NUMBER_OF_POSITIONS: i32 = 99;
 
-pub fn part1(_input: &str) -> i32 {
-    // TODO: Implement part 1
-    // This is where your solution logic goes
-    0
+pub fn part1(input: &str) -> u32 {
+    // Parse input into rotations
+    let rotations: Vec<(&str, i32)> = input
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            let trimmed = line.trim();
+            let direction = &trimmed[0..1];
+            let amount = trimmed[1..].parse::<i32>().unwrap();
+            (direction, amount)
+        })
+        .collect();
+
+    find_out_password(&rotations)
 }
 
 pub fn part2(_input: &str) -> i32 {
@@ -115,7 +125,7 @@ mod tests {
           R14
           L82
         ";
-        assert_eq!(part1(input), 0);
+        assert_eq!(part1(input), 3);
     }
 
     #[test]

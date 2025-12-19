@@ -14,9 +14,4 @@ fn main() {
     
     let result_part2 = day01::part2(&input);
     println!("Day 01 - Part 2: {}", result_part2);
-    
-    // Example usage of your existing functions:
-    let rotations = [("L", 20)];
-    let password = day01::find_out_password(&rotations);
-    println!("\nExample password calculation: {}", password);
 }
