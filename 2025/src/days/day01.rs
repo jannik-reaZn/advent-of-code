@@ -1,8 +1,3 @@
-/// Solution for Day 01
-/// 
-/// This module contains the logic for solving both parts of day 1.
-/// Tests are included in this file using #[cfg(test)].
-
 const DIAL_MAX_NUMBER_OF_POSITIONS: i32 = 99;
 
 pub fn part1(input: &str) -> u32 {
@@ -31,11 +26,11 @@ pub fn part2(_input: &str) -> i32 {
 pub fn find_out_password(rotations: &[(&str, i32)]) -> u32 {
     let mut password: u32 = 0;
     // The current position always starts at 50
-    let mut current_position: i32 = 50;
+    let mut dial: i32 = 50;
 
     for rotation in rotations {
-        current_position = apply_rotation_to_dial(current_position, &rotation);
-        if current_position == 0 {
+        dial = apply_rotation_to_dial(dial, &rotation);
+        if dial == 0 {
             password += 1
         }
     }
@@ -43,23 +38,18 @@ pub fn find_out_password(rotations: &[(&str, i32)]) -> u32 {
     password
 }
 
-pub fn apply_rotation_to_dial(current_position: i32, rotation: &(&str, i32)) -> i32 {
-    let mut rotation_number: i32 = rotation.1;
-    if rotation.0 == "L" {
-        rotation_number = rotation.1 * -1;
-    }
+pub fn apply_rotation_to_dial(dial: i32, rotation: &(&str, i32)) -> i32 {
+    let rotation_amount = if rotation.0 == "L" {
+        -rotation.1
+    } else {
+        rotation.1
+    };
 
-    let applied_rotation: i32 = current_position + rotation_number;
-    let mut _final_position: i32 = applied_rotation;
-
-    // NOTE: The assumption is that the number of rotations is between 0-99
-    if applied_rotation < 0 {
-        _final_position = DIAL_MAX_NUMBER_OF_POSITIONS + 1 + applied_rotation;
-    } else if applied_rotation >= DIAL_MAX_NUMBER_OF_POSITIONS {
-        _final_position = applied_rotation - DIAL_MAX_NUMBER_OF_POSITIONS - 1;
-    } 
-
-    return _final_position;
+    // Apply rotation and use rem_euclid to handle any rotation size and negative values
+    // rem_euclid ensures the result is always in the range [0, modulus)
+    let new_position = (dial + rotation_amount).rem_euclid(DIAL_MAX_NUMBER_OF_POSITIONS + 1);
+    
+    new_position
 }
 
 #[cfg(test)]
@@ -86,14 +76,51 @@ mod tests {
         let rotation = ("L", 43);
         assert_eq!(apply_rotation_to_dial(current_position, &rotation), 99);
     }
-
+    
     #[test]
     fn test_apply_rotation_to_dial_over_limit() {
-        let current_position = 98;
-        let rotation = ("R", 5);
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 3);
+      let current_position = 98;
+      let rotation = ("R", 5);
+      assert_eq!(apply_rotation_to_dial(current_position, &rotation), 3);
+    }
+    
+    #[test]
+    fn test_part2_example() {
+        let input = "your test input here";
+        assert_eq!(part2(input), 0);
     }
 
+    #[test]
+    fn test_apply_rotation_large_right() {
+        // Test rotation larger than dial range (>99)
+        let current_position = 50;
+        let rotation = ("R", 250); // 250 rotations = 2*100 + 50
+        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
+    }
+
+    #[test]
+    fn test_apply_rotation_large_left() {
+        // Test large negative rotation
+        let current_position = 50;
+        let rotation = ("L", 150); // -150 rotations
+        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
+    }
+
+    #[test]
+    fn test_apply_rotation_exact_multiple() {
+        // Test exact multiple of dial positions
+        let current_position = 25;
+        let rotation = ("R", 100); // Exactly one full rotation
+        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 25);
+    }
+
+    #[test]
+    fn test_apply_rotation_negative_large() {
+        // Test very large negative rotation
+        let current_position = 10;
+        let rotation = ("L", 310); // -310 rotations
+        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
+    }
     #[test]
     fn test_find_out_password() {
         let rotations = [
@@ -128,9 +155,4 @@ mod tests {
         assert_eq!(part1(input), 3);
     }
 
-    #[test]
-    fn test_part2_example() {
-        let input = "your test input here";
-        assert_eq!(part2(input), 0);
-    }
 }
