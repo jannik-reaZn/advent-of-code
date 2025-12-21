@@ -13,17 +13,54 @@ pub fn part1(input: &str) -> u32 {
         })
         .collect();
 
-    find_out_password(&rotations)
+    find_out_password_part_1(&rotations)
 }
 
-pub fn part2(_input: &str) -> i32 {
-    // TODO: Implement part 2
-    0
+pub fn part2(input: &str) -> u32 {
+    // Parse input into rotations
+    let rotations: Vec<(&str, i32)> = input
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| {
+            let trimmed = line.trim();
+            let direction = &trimmed[0..1];
+            let amount = trimmed[1..].parse::<i32>().unwrap();
+            (direction, amount)
+        })
+        .collect();
+
+    find_out_password_part_2(&rotations)
 }
 
 /// Calulates password for the dial.
 /// This is done by counting how often the dial points to 0.
-pub fn find_out_password(rotations: &[(&str, i32)]) -> u32 {
+pub fn find_out_password_part_2(rotations: &[(&str, i32)]) -> u32 {
+    let mut password: u32 = 0;
+    let mut nof_rotations: i32 = 0;
+    let mut dial_current: i32 = 50;
+    let mut dial_next: i32 = 0;
+
+    for rotation in rotations {
+        nof_rotations = rotation.1 / DIAL_MAX_NUMBER_OF_POSITIONS as i32;
+        password += nof_rotations as u32;
+
+        dial_next = apply_rotation_to_dial(dial_current, &rotation);
+
+        if dial_current > dial_next && rotation.0 == "R" {
+            // Crossing zero clockwise
+            password += 1;
+        } else if dial_current < dial_next && rotation.0 == "L" {
+            // Crossing zero counter-clockwise
+            password += 1;
+        }
+        dial_current = dial_next;
+    }
+    password
+}
+
+/// Calulates password for the dial.
+/// This is done by counting how often the dial points to 0.
+pub fn find_out_password_part_1(rotations: &[(&str, i32)]) -> u32 {
     let mut password: u32 = 0;
     // The current position always starts at 50
     let mut dial: i32 = 50;
@@ -85,12 +122,6 @@ mod tests {
     }
 
     #[test]
-    fn test_part2_example() {
-        let input = "your test input here";
-        assert_eq!(part2(input), 0);
-    }
-
-    #[test]
     fn test_apply_rotation_large_right() {
         // Test rotation larger than dial range (>99)
         let current_position = 50;
@@ -121,8 +152,9 @@ mod tests {
         let rotation = ("L", 310); // -310 rotations
         assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
     }
+
     #[test]
-    fn test_find_out_password() {
+    fn test_find_out_password_part_1() {
         let rotations = [
             ("L", 68),
             ("L", 30),
@@ -135,23 +167,58 @@ mod tests {
             ("R", 14),
             ("L", 82),
         ];
-        assert_eq!(find_out_password(&rotations), 3)
+        assert_eq!(find_out_password_part_1(&rotations), 3)
     }
 
     #[test]
-    fn test_part1() {
+    fn test_part_1() {
         let input = "
-          L68
-          L30
-          R48
-          L5
-          R60
-          L55
-          L1
-          L99
-          R14
-          L82
+        L68
+        L30
+        R48
+        L5
+        R60
+        L55
+        L1
+        L99
+        R14
+        L82
         ";
         assert_eq!(part1(input), 3);
+    }
+
+    #[test]
+    fn test_find_out_password_part_2_left_rotation() {
+        let rotations = [("L", 68)];
+        assert_eq!(find_out_password_part_2(&rotations), 1)
+    }
+
+    #[test]
+    fn test_find_out_password_part_2_left_rotation_to_zero() {
+        let rotations = [("L", 50)];
+        assert_eq!(find_out_password_part_2(&rotations), 1)
+    }
+
+    #[test]
+    fn test_find_out_password_part_2_right_rotation() {
+        let rotations = [("R", 220)];
+        assert_eq!(find_out_password_part_2(&rotations), 2)
+    }
+
+    #[test]
+    fn test_find_out_password_part_2() {
+        let rotations = [
+            ("L", 68),
+            ("L", 30),
+            ("R", 48),
+            ("L", 5),
+            ("R", 60),
+            ("L", 55),
+            ("L", 1),
+            ("L", 99),
+            ("R", 14),
+            ("L", 82),
+        ];
+        assert_eq!(find_out_password_part_2(&rotations), 6)
     }
 }
