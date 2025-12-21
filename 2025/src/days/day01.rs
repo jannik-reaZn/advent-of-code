@@ -49,12 +49,11 @@ pub fn find_out_password_part_2(rotations: &[(&str, i32)]) -> u32 {
         if dial_next == 0 {
             // Landed on zero
             password += 1;
-            continue;
-        } else if dial_current > dial_next && rotation.0 == "R" {
-            // Crossing zero clockwise
+        } else if dial_current != 0 && dial_current > dial_next && rotation.0 == "R" {
+            // Crossing zero clockwise (not starting from zero)
             password += 1;
-        } else if dial_current < dial_next && rotation.0 == "L" {
-            // Crossing zero counter-clockwise
+        } else if dial_current != 0 && dial_current < dial_next && rotation.0 == "L" {
+            // Crossing zero counter-clockwise (not starting from zero)
             password += 1;
         }
         dial_current = dial_next;
