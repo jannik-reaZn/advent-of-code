@@ -46,7 +46,11 @@ pub fn find_out_password_part_2(rotations: &[(&str, i32)]) -> u32 {
 
         dial_next = apply_rotation_to_dial(dial_current, &rotation);
 
-        if dial_current > dial_next && rotation.0 == "R" {
+        if dial_next == 0 {
+            // Landed on zero
+            password += 1;
+            continue;
+        } else if dial_current > dial_next && rotation.0 == "R" {
             // Crossing zero clockwise
             password += 1;
         } else if dial_current < dial_next && rotation.0 == "L" {
@@ -187,6 +191,8 @@ mod tests {
         assert_eq!(part1(input), 3);
     }
 
+    /// Tests for part 2
+
     #[test]
     fn test_find_out_password_part_2_left_rotation() {
         let rotations = [("L", 68)];
@@ -196,6 +202,12 @@ mod tests {
     #[test]
     fn test_find_out_password_part_2_left_rotation_to_zero() {
         let rotations = [("L", 50)];
+        assert_eq!(find_out_password_part_2(&rotations), 1)
+    }
+
+    #[test]
+    fn test_find_out_password_part_2_multiple_rotations() {
+        let rotations = [("L", 50), ("L", 5)];
         assert_eq!(find_out_password_part_2(&rotations), 1)
     }
 
