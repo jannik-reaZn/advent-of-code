@@ -41,7 +41,7 @@ pub fn find_out_password_part_2(rotations: &[(&str, i32)]) -> u32 {
     let mut dial_next: i32 = 0;
 
     for rotation in rotations {
-        nof_rotations = rotation.1 / DIAL_MAX_NUMBER_OF_POSITIONS as i32;
+        nof_rotations = rotation.1 / (DIAL_MAX_NUMBER_OF_POSITIONS + 1);
         password += nof_rotations as u32;
 
         dial_next = apply_rotation_to_dial(dial_current, &rotation);
@@ -232,5 +232,22 @@ mod tests {
             ("L", 82),
         ];
         assert_eq!(find_out_password_part_2(&rotations), 6)
+    }
+
+    #[test]
+    fn test_part_2() {
+        let input = "
+        L68
+        L30
+        R48
+        L5
+        R60
+        L55
+        L1
+        L99
+        R14
+        L82
+        ";
+        assert_eq!(part2(input), 6);
     }
 }
