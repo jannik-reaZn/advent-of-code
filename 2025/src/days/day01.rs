@@ -36,15 +36,13 @@ pub fn part2(input: &str) -> u32 {
 /// This is done by counting how often the dial points to 0.
 pub fn find_out_password_part_2(rotations: &[(&str, i32)]) -> u32 {
     let mut password: u32 = 0;
-    let mut nof_rotations: i32 = 0;
     let mut dial_current: i32 = 50;
-    let mut dial_next: i32 = 0;
 
     for rotation in rotations {
-        nof_rotations = rotation.1 / (DIAL_MAX_NUMBER_OF_POSITIONS + 1);
+        let nof_rotations = rotation.1 / (DIAL_MAX_NUMBER_OF_POSITIONS + 1);
         password += nof_rotations as u32;
 
-        dial_next = apply_rotation_to_dial(dial_current, &rotation);
+        let dial_next = apply_rotation_to_dial(dial_current, &rotation);
 
         if dial_next == 0 {
             // Landed on zero
@@ -95,65 +93,29 @@ pub fn apply_rotation_to_dial(dial: i32, rotation: &(&str, i32)) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
-    #[test]
-    fn test_apply_rotation_to_dial() {
-        let current_position = 42;
-        let rotation = ("R", 10);
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 52);
-    }
-
-    #[test]
-    fn test_apply_rotation_to_dial_zero() {
-        let current_position = 42;
-        let rotation = ("L", 42);
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
-    }
-
-    #[test]
-    fn test_apply_rotation_to_dial_under_limit() {
-        let current_position = 42;
-        let rotation = ("L", 43);
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 99);
-    }
-
-    #[test]
-    fn test_apply_rotation_to_dial_over_limit() {
-        let current_position = 98;
-        let rotation = ("R", 5);
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 3);
-    }
-
-    #[test]
-    fn test_apply_rotation_large_right() {
-        // Test rotation larger than dial range (>99)
-        let current_position = 50;
-        let rotation = ("R", 250); // 250 rotations = 2*100 + 50
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
-    }
-
-    #[test]
-    fn test_apply_rotation_large_left() {
-        // Test large negative rotation
-        let current_position = 50;
-        let rotation = ("L", 150); // -150 rotations
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
-    }
-
-    #[test]
-    fn test_apply_rotation_exact_multiple() {
-        // Test exact multiple of dial positions
-        let current_position = 25;
-        let rotation = ("R", 100); // Exactly one full rotation
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 25);
-    }
-
-    #[test]
-    fn test_apply_rotation_negative_large() {
-        // Test very large negative rotation
-        let current_position = 10;
-        let rotation = ("L", 310); // -310 rotations
-        assert_eq!(apply_rotation_to_dial(current_position, &rotation), 0);
+    #[rstest]
+    #[case(42, "R", 10, 52, "basic right rotation")]
+    #[case(42, "L", 42, 0, "left rotation to zero")]
+    #[case(42, "L", 43, 99, "left rotation under limit")]
+    #[case(98, "R", 5, 3, "right rotation over limit")]
+    #[case(50, "R", 250, 0, "large right rotation (>99)")]
+    #[case(50, "L", 150, 0, "large left rotation")]
+    #[case(25, "R", 100, 25, "exact multiple rotation")]
+    #[case(10, "L", 310, 0, "very large left rotation")]
+    fn test_apply_rotation_to_dial(
+        #[case] current_position: i32,
+        #[case] direction: &str,
+        #[case] amount: i32,
+        #[case] expected: i32,
+        #[case] _description: &str,
+    ) {
+        let rotation = (direction, amount);
+        assert_eq!(
+            apply_rotation_to_dial(current_position, &rotation),
+            expected
+        );
     }
 
     #[test]
@@ -192,28 +154,17 @@ mod tests {
 
     /// Tests for part 2
 
-    #[test]
-    fn test_find_out_password_part_2_left_rotation() {
-        let rotations = [("L", 68)];
-        assert_eq!(find_out_password_part_2(&rotations), 1)
-    }
-
-    #[test]
-    fn test_find_out_password_part_2_left_rotation_to_zero() {
-        let rotations = [("L", 50)];
-        assert_eq!(find_out_password_part_2(&rotations), 1)
-    }
-
-    #[test]
-    fn test_find_out_password_part_2_multiple_rotations() {
-        let rotations = [("L", 50), ("L", 5)];
-        assert_eq!(find_out_password_part_2(&rotations), 1)
-    }
-
-    #[test]
-    fn test_find_out_password_part_2_right_rotation() {
-        let rotations = [("R", 220)];
-        assert_eq!(find_out_password_part_2(&rotations), 2)
+    #[rstest]
+    #[case(&[("L", 68)], 1, "single left rotation")]
+    #[case(&[("L", 50)], 1, "left rotation to zero")]
+    #[case(&[("R", 220)], 2, "right rotation with multiple crossings")]
+    #[case(&[("L", 50), ("L", 5)], 1, "multiple rotations")]
+    fn test_find_out_password_part_2_parameterized(
+        #[case] rotations: &[(&str, i32)],
+        #[case] expected: u32,
+        #[case] _description: &str,
+    ) {
+        assert_eq!(find_out_password_part_2(rotations), expected)
     }
 
     #[test]
