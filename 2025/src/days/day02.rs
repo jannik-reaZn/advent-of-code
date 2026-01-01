@@ -79,7 +79,7 @@ pub fn is_sequence_part_2(seq: &str) -> bool {
 
     let i: usize = 0;
     let j: usize = i + window_size;
-    let k: usize = i + window_size + 1;
+    let k: usize = j + 1;
     let l: usize = k + window_size;
 
     while window_size < seq_size / 2 {
@@ -100,6 +100,16 @@ pub fn is_sequence_part_2(seq: &str) -> bool {
     }
 
     false
+}
+
+/// Checks wether all fragents all equal to each other
+pub fn check_all_fragments_for_equality(fragments: Vec<&str>) -> bool {
+    if fragments.len() == 0 {
+        return false;
+    }
+    let first = fragments[0];
+    let all_fragments_equal = fragments.iter().all(|&f| f == first);
+    return all_fragments_equal;
 }
 
 #[cfg(test)]
@@ -152,5 +162,17 @@ mod tests {
         assert!(splitted_sequence.len() == 2);
         assert!(splitted_sequence[0] == (11, 22));
         assert!(splitted_sequence[1] == (95, 115));
+    }
+
+    #[test]
+    fn test_fragments_equal() {
+        let fragments = vec!["123", "123"];
+        assert!(check_all_fragments_for_equality(fragments) == true)
+    }
+
+    #[test]
+    fn test_fragments_not_equal() {
+        let fragments = vec!["123", "456"];
+        assert!(check_all_fragments_for_equality(fragments) == false)
     }
 }
