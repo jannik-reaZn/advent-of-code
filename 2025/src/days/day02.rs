@@ -69,37 +69,44 @@ pub fn is_sequence_part_1(seq: &str) -> bool {
 }
 
 pub fn is_sequence_part_2(seq: &str) -> bool {
-    let mut window_size = 0;
-
     let seq_size = seq.len();
 
     if seq_size < 2 {
         return false;
     }
 
-    let i: usize = 0;
-    let j: usize = i + window_size;
-    let k: usize = j + 1;
-    let l: usize = k + window_size;
+    // Try different pattern lengths (window_size)
+    for window_size in 1..=seq_size {
+        // Check if the entire string can be made by repeating this pattern
+        if seq_size % window_size == 0 {
+            let pattern = &seq[0..window_size];
+            let num_repeats = seq_size / window_size;
 
-    while window_size < seq_size / 2 {
-        for i in i..seq_size / 2 {
-            assert!(i <= j);
-            assert!(j < k);
-            assert!(k <= l);
-            assert!(l < seq_size);
+            // Must be repeated at least twice
+            if num_repeats >= 2 {
+                let all_match = (0..num_repeats).all(|i| {
+                    let start = i * window_size;
+                    let end = start + window_size;
+                    &seq[start..end] == pattern
+                });
 
-            let first_sub_sequence: &str = &seq[i..j];
-            let second_sub_sequence: &str = &seq[k..l];
-
-            if first_sub_sequence == second_sub_sequence {
-                return true;
+                if all_match {
+                    return true;
+                }
             }
         }
-        window_size += 1
     }
 
     false
+}
+
+pub fn split_into_fragments(seq: &str, nof_splits: u64) -> Vec<&str> {
+    let fragments = vec!["123"];
+    let mut split: u64 = 1;
+    while split < nof_splits {
+        split += 1;
+    }
+    return fragments;
 }
 
 /// Checks wether all fragents all equal to each other
