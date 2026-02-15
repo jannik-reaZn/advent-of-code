@@ -14,7 +14,20 @@ pub fn part2(input: &str) -> i32 {
 }
 
 pub fn get_nof_adjecent_neighbours(matrix: [[char; 3]; 3]) -> i32 {
-    6
+    let mut nof_adjecent_neighbours = 0;
+    for (i, row) in matrix.iter().enumerate() {
+        for (j, _) in row.iter().enumerate() {
+            // exclude middle
+            if i == 1 && j == 1 {
+                continue;
+            }
+
+            if matrix[i][j] == '@' {
+                nof_adjecent_neighbours += 1;
+            }
+        }
+    }
+    nof_adjecent_neighbours
 }
 
 #[cfg(test)]
@@ -24,6 +37,10 @@ mod tests {
 
     #[rstest]
     #[case([['.', '.', '@'], ['@', '@', '@'], ['@', '@', '@']], 6)]
+    #[case([['.', '.', '.'], ['.', '@', '.'], ['.', '.', '.']], 0)]
+    #[case([['@', '@', '@'], ['@', '@', '@'], ['@', '@', '@']], 8)]
+    #[case([['@', '@', '@'], ['@', '.', '@'], ['@', '@', '@']], 8)]
+    #[case([['@', '@', '@'], ['@', '@', '@'], ['@', '@', '.']], 7)]
     fn test_get_nof_adjecent_neighbours(
         #[case] matrix: [[char; 3]; 3],
         #[case] expected_neighbours: i32,
