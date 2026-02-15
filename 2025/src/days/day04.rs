@@ -1,8 +1,3 @@
-/// Solution for Day 4
-///
-/// This module contains the logic for solving both parts of day 4.
-/// Tests are included in this file using #[cfg(test)].
-
 pub fn part1(grid: &str) -> i32 {
     let mut nof_accessable_paper_rolls = 0;
     let grid_padded = append_non_paper_rolls_to_grid_border(grid);
@@ -22,23 +17,7 @@ pub fn part1(grid: &str) -> i32 {
                 continue;
             }
 
-            let nof_paper_rolls = get_nof_adjecent_neighbours([
-                [
-                    grid_padded[row - 1][col - 1],
-                    grid_padded[row - 1][col],
-                    grid_padded[row - 1][col + 1],
-                ],
-                [
-                    grid_padded[row][col - 1],
-                    grid_padded[row][col],
-                    grid_padded[row][col + 1],
-                ],
-                [
-                    grid_padded[row + 1][col - 1],
-                    grid_padded[row + 1][col],
-                    grid_padded[row + 1][col + 1],
-                ],
-            ]);
+            let nof_paper_rolls = count_adjacent_paper_rolls(&grid_padded, row, col);
 
             if nof_paper_rolls < 4 {
                 nof_accessable_paper_rolls += 1;
@@ -54,7 +33,7 @@ pub fn part2(input: &str) -> i32 {
     0
 }
 
-// This function appends non paper rolls around the edges of the grid
+/// This function appends non paper rolls ('.') around the edges of the grid
 pub fn append_non_paper_rolls_to_grid_border(grid: &str) -> Vec<Vec<char>> {
     // Convert grid input into a 2D vector of chars
     let mut grid_padded: Vec<Vec<char>> = grid
@@ -84,21 +63,28 @@ pub fn append_non_paper_rolls_to_grid_border(grid: &str) -> Vec<Vec<char>> {
     grid_padded
 }
 
-pub fn get_nof_adjecent_neighbours(matrix: [[char; 3]; 3]) -> i32 {
-    let mut nof_adjecent_neighbours = 0;
-    for (i, row) in matrix.iter().enumerate() {
-        for (j, _) in row.iter().enumerate() {
-            // exclude middle
-            if i == 1 && j == 1 {
+/// Count adjacent paper rolls around a given position in the grid
+pub fn count_adjacent_paper_rolls(grid: &[Vec<char>], row: usize, col: usize) -> i32 {
+    let mut count = 0;
+
+    // Check all 8 neighbors around the position
+    for row_offset in -1..=1 {
+        for col_offset in -1..=1 {
+            // Skip the center cell
+            if row_offset == 0 && col_offset == 0 {
                 continue;
             }
 
-            if matrix[i][j] == '@' {
-                nof_adjecent_neighbours += 1;
+            let neighbor_row = (row as i32 + row_offset) as usize;
+            let neighbor_col = (col as i32 + col_offset) as usize;
+
+            if grid[neighbor_row][neighbor_col] == '@' {
+                count += 1;
             }
         }
     }
-    nof_adjecent_neighbours
+
+    count
 }
 
 #[cfg(test)]
@@ -141,16 +127,21 @@ mod tests {
     }
 
     #[rstest]
-    #[case([['.', '.', '@'], ['@', '@', '@'], ['@', '@', '@']], 6)]
-    #[case([['.', '.', '.'], ['.', '@', '.'], ['.', '.', '.']], 0)]
-    #[case([['@', '@', '@'], ['@', '@', '@'], ['@', '@', '@']], 8)]
-    #[case([['@', '@', '@'], ['@', '.', '@'], ['@', '@', '@']], 8)]
-    #[case([['@', '@', '@'], ['@', '@', '@'], ['@', '@', '.']], 7)]
-    fn test_get_nof_adjecent_neighbours(
-        #[case] matrix: [[char; 3]; 3],
-        #[case] expected_neighbours: i32,
+    #[case(vec![vec!['.', '.', '@'], vec!['@', '@', '@'], vec!['@', '@', '@']], 1, 1, 6)]
+    #[case(vec![vec!['.', '.', '.'], vec!['.', '@', '.'], vec!['.', '.', '.']], 1, 1, 0)]
+    #[case(vec![vec!['@', '@', '@'], vec!['@', '@', '@'], vec!['@', '@', '@']], 1, 1, 8)]
+    #[case(vec![vec!['@', '@', '@'], vec!['@', '.', '@'], vec!['@', '@', '@']], 1, 1, 8)]
+    #[case(vec![vec!['@', '@', '@'], vec!['@', '@', '@'], vec!['@', '@', '.']], 1, 1, 7)]
+    fn test_count_adjacent_paper_rolls(
+        #[case] grid: Vec<Vec<char>>,
+        #[case] row: usize,
+        #[case] col: usize,
+        #[case] expected_paper_rolls: i32,
     ) {
-        assert_eq!(get_nof_adjecent_neighbours(matrix), expected_neighbours);
+        assert_eq!(
+            count_adjacent_paper_rolls(&grid, row, col),
+            expected_paper_rolls
+        );
     }
 
     #[test]
