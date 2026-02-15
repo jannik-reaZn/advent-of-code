@@ -100,15 +100,6 @@ pub fn is_sequence_part_2(seq: &str) -> bool {
     false
 }
 
-pub fn split_into_fragments(seq: &str, nof_splits: u64) -> Vec<&str> {
-    let fragments = vec!["123"];
-    let mut split: u64 = 1;
-    while split < nof_splits {
-        split += 1;
-    }
-    return fragments;
-}
-
 /// Checks wether all fragents all equal to each other
 pub fn check_all_fragments_for_equality(fragments: Vec<&str>) -> bool {
     if fragments.len() == 0 {
