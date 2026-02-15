@@ -28,9 +28,46 @@ pub fn part1(grid: &str) -> i32 {
     return nof_accessable_paper_rolls;
 }
 
-pub fn part2(input: &str) -> i32 {
-    // TODO: Implement part 2
-    0
+pub fn part2(grid: &str) -> i32 {
+    let grid_padded = append_non_paper_rolls_to_grid_border(grid);
+
+    let mut removable_paper_roll = true;
+    let mut nof_total_removable_paper_rolls = 0;
+
+    while removable_paper_roll {
+        removable_paper_roll = false;
+        let mut nof_accessable_paper_rolls = 0;
+
+        // row
+        let row_start = 1;
+        let row_end = grid_padded.len() - 2;
+
+        // col
+        let col_start = 1;
+        let col_end = grid_padded[0].len() - 2;
+
+        for row in row_start..=row_end {
+            for col in col_start..=col_end {
+                // Only count paper rolls (@), not empty spaces (.)
+                if grid_padded[row][col] != '@' {
+                    continue;
+                }
+
+                let nof_paper_rolls = count_adjacent_paper_rolls(&grid_padded, row, col);
+
+                if nof_paper_rolls < 4 {
+                    nof_accessable_paper_rolls += 1;
+                }
+            }
+        }
+
+        if nof_accessable_paper_rolls > 0 {
+            removable_paper_roll = true;
+            nof_total_removable_paper_rolls += nof_accessable_paper_rolls;
+        }
+    }
+
+    return nof_total_removable_paper_rolls;
 }
 
 /// This function appends non paper rolls ('.') around the edges of the grid
@@ -163,7 +200,18 @@ mod tests {
 
     #[test]
     fn test_part2_example() {
-        let input = "your test input here";
-        assert_eq!(part2(input), 0); // Replace with expected result
+        let input = "
+            ..@@.@@@@.
+            @@@.@.@.@@
+            @@@@@.@.@@
+            @.@@@@..@.
+            @@.@@@@.@@
+            .@@@@@@@.@
+            .@.@.@.@@@
+            @.@@@.@@@@
+            .@@@@@@@@.
+            @.@.@@@.@.
+        ";
+        assert_eq!(part2(input), 43);
     }
 }
