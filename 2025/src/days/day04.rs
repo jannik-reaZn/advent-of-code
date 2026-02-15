@@ -4,7 +4,48 @@
 /// Tests are included in this file using #[cfg(test)].
 
 pub fn part1(grid: &str) -> i32 {
-    let nof_accessable_paper_rolls = 0;
+    let mut nof_accessable_paper_rolls = 0;
+    let grid_padded = append_non_paper_rolls_to_grid_border(grid);
+
+    // row
+    let row_start = 1;
+    let row_end = grid_padded.len() - 2;
+
+    // col
+    let col_start = 1;
+    let col_end = grid_padded[0].len() - 2;
+
+    for row in row_start..=row_end {
+        for col in col_start..=col_end {
+            // Only count paper rolls (@), not empty spaces (.)
+            if grid_padded[row][col] != '@' {
+                continue;
+            }
+
+            let nof_paper_rolls = get_nof_adjecent_neighbours([
+                [
+                    grid_padded[row - 1][col - 1],
+                    grid_padded[row - 1][col],
+                    grid_padded[row - 1][col + 1],
+                ],
+                [
+                    grid_padded[row][col - 1],
+                    grid_padded[row][col],
+                    grid_padded[row][col + 1],
+                ],
+                [
+                    grid_padded[row + 1][col - 1],
+                    grid_padded[row + 1][col],
+                    grid_padded[row + 1][col + 1],
+                ],
+            ]);
+
+            if nof_paper_rolls < 4 {
+                nof_accessable_paper_rolls += 1;
+            }
+        }
+    }
+
     return nof_accessable_paper_rolls;
 }
 
@@ -126,7 +167,7 @@ mod tests {
             .@@@@@@@@.
             @.@.@@@.@.
         ";
-        assert_eq!(part1(input), 0); // Replace with expected result
+        assert_eq!(part1(input), 13);
     }
 
     #[test]
