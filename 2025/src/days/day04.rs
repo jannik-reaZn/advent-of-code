@@ -1,75 +1,63 @@
 pub fn part1(grid: &str) -> i32 {
-    let mut nof_accessable_paper_rolls = 0;
     let grid_padded = append_non_paper_rolls_to_grid_border(grid);
-
-    // row
-    let row_start = 1;
-    let row_end = grid_padded.len() - 2;
-
-    // col
-    let col_start = 1;
-    let col_end = grid_padded[0].len() - 2;
-
-    for row in row_start..=row_end {
-        for col in col_start..=col_end {
-            // Only count paper rolls (@), not empty spaces (.)
-            if grid_padded[row][col] != '@' {
-                continue;
-            }
-
-            let nof_paper_rolls = count_adjacent_paper_rolls(&grid_padded, row, col);
-
-            if nof_paper_rolls < 4 {
-                nof_accessable_paper_rolls += 1;
-            }
-        }
-    }
-
-    return nof_accessable_paper_rolls;
+    let (count, _) = count_and_remove_accessible_paper_rolls(grid_padded, false);
+    count
 }
 
 pub fn part2(grid: &str) -> i32 {
     let mut grid_padded = append_non_paper_rolls_to_grid_border(grid);
-
-    let mut removable_paper_roll = true;
     let mut nof_total_removable_paper_rolls = 0;
 
-    while removable_paper_roll {
-        removable_paper_roll = false;
-        let mut nof_accessable_paper_rolls = 0;
+    loop {
+        let (nof_accessable_paper_rolls, new_grid) =
+            count_and_remove_accessible_paper_rolls(grid_padded, true);
 
-        // row
-        let row_start = 1;
-        let row_end = grid_padded.len() - 2;
+        if nof_accessable_paper_rolls == 0 {
+            break;
+        }
 
-        // col
-        let col_start = 1;
-        let col_end = grid_padded[0].len() - 2;
+        nof_total_removable_paper_rolls += nof_accessable_paper_rolls;
+        grid_padded = new_grid;
+    }
 
-        for row in row_start..=row_end {
-            for col in col_start..=col_end {
-                // Only count paper rolls (@), not empty spaces (.)
-                if grid_padded[row][col] != '@' {
-                    continue;
-                }
+    nof_total_removable_paper_rolls
+}
 
-                let nof_paper_rolls = count_adjacent_paper_rolls(&grid_padded, row, col);
+/// Counts accessible paper rolls and optionally removes them from the grid.
+/// Returns the count and the (possibly modified) grid.
+fn count_and_remove_accessible_paper_rolls(
+    mut grid: Vec<Vec<char>>,
+    remove: bool,
+) -> (i32, Vec<Vec<char>>) {
+    let mut nof_accessable_paper_rolls = 0;
 
-                if nof_paper_rolls < 4 {
-                    nof_accessable_paper_rolls += 1;
-                    grid_padded[row][col] = '.';
+    // row
+    let row_start = 1;
+    let row_end = grid.len() - 2;
+
+    // col
+    let col_start = 1;
+    let col_end = grid[0].len() - 2;
+
+    for row in row_start..=row_end {
+        for col in col_start..=col_end {
+            // Only count paper rolls (@), not empty spaces (.)
+            if grid[row][col] != '@' {
+                continue;
+            }
+
+            let nof_paper_rolls = count_adjacent_paper_rolls(&grid, row, col);
+
+            if nof_paper_rolls < 4 {
+                nof_accessable_paper_rolls += 1;
+                if remove {
+                    grid[row][col] = '.';
                 }
             }
         }
-
-        if nof_accessable_paper_rolls > 0 {
-            removable_paper_roll = true;
-            nof_total_removable_paper_rolls += nof_accessable_paper_rolls;
-            nof_accessable_paper_rolls = 0;
-        }
     }
 
-    return nof_total_removable_paper_rolls;
+    (nof_accessable_paper_rolls, grid)
 }
 
 /// This function appends non paper rolls ('.') around the edges of the grid
