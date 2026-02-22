@@ -29,7 +29,7 @@ pub fn part1(grid: &str) -> i32 {
 }
 
 pub fn part2(grid: &str) -> i32 {
-    let grid_padded = append_non_paper_rolls_to_grid_border(grid);
+    let mut grid_padded = append_non_paper_rolls_to_grid_border(grid);
 
     let mut removable_paper_roll = true;
     let mut nof_total_removable_paper_rolls = 0;
@@ -57,6 +57,7 @@ pub fn part2(grid: &str) -> i32 {
 
                 if nof_paper_rolls < 4 {
                     nof_accessable_paper_rolls += 1;
+                    grid_padded[row][col] = '.';
                 }
             }
         }
@@ -64,6 +65,7 @@ pub fn part2(grid: &str) -> i32 {
         if nof_accessable_paper_rolls > 0 {
             removable_paper_roll = true;
             nof_total_removable_paper_rolls += nof_accessable_paper_rolls;
+            nof_accessable_paper_rolls = 0;
         }
     }
 
