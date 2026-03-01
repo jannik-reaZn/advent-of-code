@@ -2,6 +2,7 @@
 ///
 /// This module contains the logic for solving both parts of day 5.
 /// Tests are included in this file using #[cfg(test)].
+use std::collections::HashSet;
 
 pub fn part1(input: &str) -> i64 {
     let mut amount_fresh_ingredients = 0;
@@ -48,16 +49,22 @@ pub fn is_ingredient_fresh(id: i64, ingredient_range: &Vec<(i64, i64)>) -> bool 
     false
 }
 
+pub fn get_ingredients_from_range(ingredient_range: &Vec<(i64, i64)>) -> HashSet<i64> {
+    let mut ingredient_in_ranges: HashSet<i64> = HashSet::new();
+
+    for (start, end) in ingredient_range {
+        for id in *start..=*end {
+            ingredient_in_ranges.insert(id);
+        }
+    }
+
+    ingredient_in_ranges
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use rstest::rstest;
-
-    #[test]
-    fn test_part1_example() {
-        let input = "your test input here";
-        assert_eq!(part1(input), 0); // Replace with expected result
-    }
 
     #[test]
     fn test_prepare_input() {
@@ -77,15 +84,16 @@ mod tests {
     #[case(32, false)]
     fn test_is_ingredient_fresh(#[case] id: i64, #[case] expected: bool) {
         let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
-        let ingredient_ids = vec![1, 5, 8, 11, 17, 32];
-
         let is_ingredient_fresh = is_ingredient_fresh(id, &ingredient_range);
         assert_eq!(is_ingredient_fresh, expected);
     }
 
     #[test]
-    fn test_part2_example() {
-        let input = "your test input here";
-        assert_eq!(part2(input), 0); // Replace with expected result
+    fn test_get_ingredients_from_range() {
+        let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
+        let ingredients = get_ingredients_from_range(&ingredient_range);
+        let expected_ingredients: HashSet<i64> =
+            HashSet::from([3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+        assert!(ingredients == expected_ingredients);
     }
 }
