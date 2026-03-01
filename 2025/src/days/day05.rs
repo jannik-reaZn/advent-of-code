@@ -36,8 +36,6 @@ pub fn prepare_input(input: &str) -> (Vec<(i64, i64)>, Vec<i64>) {
         }
     }
 
-    println!("Ingredient Ranges: {:?}", ingredient_range);
-    println!("Ingredient IDs: {:?}", ingredient_ids);
     (ingredient_range, ingredient_ids)
 }
 
