@@ -18,10 +18,9 @@ pub fn prepare_input(input: &str) -> (Vec<(i32, i32)>, Vec<i32>) {
     let mut ingredient_ids: Vec<i32> = Vec::new();
 
     for line in input.lines() {
-        let splitted_line = line.split('-').collect::<Vec<&str>>();
-        if splitted_line.len() == 2 {
-            let start = splitted_line[0].trim().parse::<i32>().unwrap();
-            let end = splitted_line[1].trim().parse::<i32>().unwrap();
+        if let Some((start, end)) = line.split_once('-') {
+            let start = start.trim().parse::<i32>().unwrap();
+            let end = end.trim().parse::<i32>().unwrap();
             ingredient_range.push((start, end));
         } else if !line.trim().is_empty() {
             let id = line.trim().parse::<i32>().unwrap();
