@@ -3,9 +3,17 @@
 /// This module contains the logic for solving both parts of day 5.
 /// Tests are included in this file using #[cfg(test)].
 
-pub fn part1(input: &str) -> i32 {
-    // TODO: Implement part 1
-    0
+pub fn part1(input: &str) -> i64 {
+    let mut amount_fresh_ingredients = 0;
+    let (ingredient_range, ingredient_ids) = prepare_input(input);
+
+    for ingredient_id in ingredient_ids {
+        if is_ingredient_fresh(ingredient_id, &ingredient_range) {
+            amount_fresh_ingredients += 1;
+        }
+    }
+
+    amount_fresh_ingredients
 }
 
 pub fn part2(input: &str) -> i32 {
@@ -13,17 +21,17 @@ pub fn part2(input: &str) -> i32 {
     0
 }
 
-pub fn prepare_input(input: &str) -> (Vec<(i32, i32)>, Vec<i32>) {
-    let mut ingredient_range: Vec<(i32, i32)> = Vec::new();
-    let mut ingredient_ids: Vec<i32> = Vec::new();
+pub fn prepare_input(input: &str) -> (Vec<(i64, i64)>, Vec<i64>) {
+    let mut ingredient_range: Vec<(i64, i64)> = Vec::new();
+    let mut ingredient_ids: Vec<i64> = Vec::new();
 
     for line in input.lines() {
         if let Some((start, end)) = line.split_once('-') {
-            let start = start.trim().parse::<i32>().unwrap();
-            let end = end.trim().parse::<i32>().unwrap();
+            let start = start.trim().parse::<i64>().unwrap();
+            let end = end.trim().parse::<i64>().unwrap();
             ingredient_range.push((start, end));
         } else if !line.trim().is_empty() {
-            let id = line.trim().parse::<i32>().unwrap();
+            let id = line.trim().parse::<i64>().unwrap();
             ingredient_ids.push(id);
         }
     }
@@ -33,7 +41,7 @@ pub fn prepare_input(input: &str) -> (Vec<(i32, i32)>, Vec<i32>) {
     (ingredient_range, ingredient_ids)
 }
 
-pub fn is_ingredient_fresh(id: i32, ingredient_range: &Vec<(i32, i32)>) -> bool {
+pub fn is_ingredient_fresh(id: i64, ingredient_range: &Vec<(i64, i64)>) -> bool {
     for (start, end) in ingredient_range {
         if id >= *start && id <= *end {
             return true;
@@ -69,7 +77,7 @@ mod tests {
     #[case(11, true)]
     #[case(17, true)]
     #[case(32, false)]
-    fn test_is_ingredient_fresh(#[case] id: i32, #[case] expected: bool) {
+    fn test_is_ingredient_fresh(#[case] id: i64, #[case] expected: bool) {
         let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
         let ingredient_ids = vec![1, 5, 8, 11, 17, 32];
 
