@@ -33,9 +33,19 @@ pub fn prepare_input(input: &str) -> (Vec<(i32, i32)>, Vec<i32>) {
     (ingredient_range, ingredient_ids)
 }
 
+pub fn is_ingredient_fresh(id: i32, ingredient_range: &Vec<(i32, i32)>) -> bool {
+    for (start, end) in ingredient_range {
+        if id >= *start && id <= *end {
+            return true;
+        }
+    }
+    false
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::rstest;
 
     #[test]
     fn test_part1_example() {
@@ -50,6 +60,21 @@ mod tests {
         let (ingredient_range, ingredient_ids) = prepare_input(input);
         assert_eq!(ingredient_range, vec![(3, 5), (10, 14), (16, 20), (12, 18)]);
         assert_eq!(ingredient_ids, vec![1, 5, 8, 11, 17, 32]);
+    }
+
+    #[rstest]
+    #[case(1, false)]
+    #[case(5, true)]
+    #[case(8, false)]
+    #[case(11, true)]
+    #[case(17, true)]
+    #[case(32, false)]
+    fn test_is_ingredient_fresh(#[case] id: i32, #[case] expected: bool) {
+        let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
+        let ingredient_ids = vec![1, 5, 8, 11, 17, 32];
+
+        let is_ingredient_fresh = is_ingredient_fresh(id, &ingredient_range);
+        assert_eq!(is_ingredient_fresh, expected);
     }
 
     #[test]
