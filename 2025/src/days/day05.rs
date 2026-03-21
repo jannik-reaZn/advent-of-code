@@ -70,30 +70,15 @@ pub fn get_ingredients_from_range(ingredient_range: &Vec<(i64, i64)>) -> HashSet
     ingredient_in_ranges
 }
 
-pub fn merge_ingredient_ranges(ingredient_range: &Vec<(i64, i64)>) -> Vec<(i64, i64)> {
-    let mut merged_ingredient_range: Vec<(i64, i64)> = Vec::new();
-
-    if ingredient_range.len() == 0 {
-        return ingredient_range.to_vec();
+pub fn merge_ingredient_ranges(ingredient_range: &Vec<(i64, i64)>) -> Vec<i64> {
+    let mut ingredient_ids: Vec<i64> = Vec::new();
+    for (start, end) in ingredient_range {
+        ingredient_ids.push(*start);
+        ingredient_ids.push(*end);
     }
 
-    // First element can be added
-    merged_ingredient_range.push(ingredient_range[0]);
+    ingredient_ids.sort();
+    ingredient_ids.dedup();
 
-    for (_start, _end) in ingredient_range.iter().enumerate() {
-        // Case 1: Start <= First Merged Ingredient
-        // Case 1.1: End <= Second Merged Ingredient
-        // Replace first merged ingredient with start
-        // Case 1.2: End > Second Merged Ingredient
-        // Replace merged ingredient with tuple
-
-        // Case 2: Start > First Merged Ingredient
-        // Case 2.1: End <= Second Merged Ingredient
-        // Do nothing
-        // Case 2.2: End > Second Merged Ingredient
-        // Replace second merged ingredient with end
-        // Case 2.3: Start > Second Merged Ingredient
-    }
-
-    return merged_ingredient_range;
+    return ingredient_ids;
 }

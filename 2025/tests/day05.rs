@@ -36,8 +36,8 @@ fn test_get_ingredients_from_range() {
 #[test]
 fn test_merge_ingredient_ranges() {
     let ingredient_range: Vec<(i64, i64)> = vec![(3, 5), (4, 5), (16, 20), (12, 18)];
-    let merged_ranges: Vec<(i64, i64)> = merge_ingredient_ranges(&ingredient_range);
-    let expected_merged_ranges: Vec<(i64, i64)> = vec![(3, 5), (10, 20)];
+    let merged_ranges: Vec<i64> = merge_ingredient_ranges(&ingredient_range);
+    let expected_merged_ranges: Vec<i64> = vec![3, 4, 5, 12, 16, 18, 20];
     assert_eq!(merged_ranges, expected_merged_ranges);
 }
 
