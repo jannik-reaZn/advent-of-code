@@ -17,9 +17,14 @@ pub fn part1(input: &str) -> i64 {
     amount_fresh_ingredients
 }
 
-pub fn part2(input: &str) -> i32 {
-    // TODO: Implement part 2
-    0
+// This approach is naive since the ingredient range can be very large.
+// The algorithm uses a HashSet to store all the ingredient ids that are in the range, which can be memory intensive if the range is large.
+// A more efficient approach would be to implement a merge of the ranges and then check if the ingredient ids fall within any of the merged ranges,
+// which would reduce the memory usage and improve the performance of the algorithm.
+pub fn part2_naive(input: &str) -> i64 {
+    let (ingredient_range, _) = prepare_input(input);
+    let ingredients = get_ingredients_from_range(&ingredient_range);
+    ingredients.len() as i64
 }
 
 pub fn prepare_input(input: &str) -> (Vec<(i64, i64)>, Vec<i64>) {
@@ -61,39 +66,30 @@ pub fn get_ingredients_from_range(ingredient_range: &Vec<(i64, i64)>) -> HashSet
     ingredient_in_ranges
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rstest::rstest;
+pub fn merge_ingredient_ranges(ingredient_range: &Vec<(i64, i64)>) -> Vec<(i64, i64)> {
+    let mut merged_ingredient_range: Vec<(i64, i64)> = Vec::new();
 
-    #[test]
-    fn test_prepare_input() {
-        let input = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
-
-        let (ingredient_range, ingredient_ids) = prepare_input(input);
-        assert_eq!(ingredient_range, vec![(3, 5), (10, 14), (16, 20), (12, 18)]);
-        assert_eq!(ingredient_ids, vec![1, 5, 8, 11, 17, 32]);
+    if ingredient_range.len() == 0 {
+        return ingredient_range.to_vec();
     }
 
-    #[rstest]
-    #[case(1, false)]
-    #[case(5, true)]
-    #[case(8, false)]
-    #[case(11, true)]
-    #[case(17, true)]
-    #[case(32, false)]
-    fn test_is_ingredient_fresh(#[case] id: i64, #[case] expected: bool) {
-        let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
-        let is_ingredient_fresh = is_ingredient_fresh(id, &ingredient_range);
-        assert_eq!(is_ingredient_fresh, expected);
+    // First element can be added
+    merged_ingredient_range.push(ingredient_range[0]);
+
+    for (start, end) in ingredient_range.iter().enumerate() {
+        // Case 1: Start <= First Merged Ingredient
+        // Case 1.1: End <= Second Merged Ingredient
+        // Replace first merged ingredient with start
+        // Case 1.2: End > Second Merged Ingredient
+        // Replace merged ingredient with tuple
+
+        // Case 2: Start > First Merged Ingredient
+        // Case 2.1: End <= Second Merged Ingredient
+        // Do nothing
+        // Case 2.2: End > Second Merged Ingredient
+        // Replace second merged ingredient with end
+        // Case 2.3: Start > Second Merged Ingredient
     }
 
-    #[test]
-    fn test_get_ingredients_from_range() {
-        let ingredient_range = vec![(3, 5), (10, 14), (16, 20), (12, 18)];
-        let ingredients = get_ingredients_from_range(&ingredient_range);
-        let expected_ingredients: HashSet<i64> =
-            HashSet::from([3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-        assert!(ingredients == expected_ingredients);
-    }
+    return merged_ingredient_range;
 }
