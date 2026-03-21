@@ -36,8 +36,8 @@ fn test_get_ingredients_from_range() {
 #[test]
 fn test_merge_ingredient_ranges() {
     let ingredient_range: Vec<(i64, i64)> = vec![(3, 5), (4, 5), (16, 20), (12, 18)];
-    let merged_ranges: Vec<i64> = merge_ingredient_ranges(&ingredient_range);
-    let expected_merged_ranges: Vec<i64> = vec![3, 4, 5, 12, 16, 18, 20];
+    let merged_ranges: Vec<(i64, i64)> = merge_ingredient_ranges(&ingredient_range);
+    let expected_merged_ranges: Vec<(i64, i64)> = vec![(3, 5), (12, 20)];
     assert_eq!(merged_ranges, expected_merged_ranges);
 }
 
@@ -49,8 +49,8 @@ fn test_part1() {
 }
 
 #[test]
-fn test_part2_naive() {
+fn test_part2() {
     let input = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
-    let result = part2_naive(input);
+    let result = part2(input);
     assert_eq!(result, 14);
 }
