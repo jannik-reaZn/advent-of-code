@@ -27,6 +27,10 @@ pub fn part2_naive(input: &str) -> i64 {
     ingredients.len() as i64
 }
 
+pub fn part2(input: &str) -> i64 {
+    0
+}
+
 pub fn prepare_input(input: &str) -> (Vec<(i64, i64)>, Vec<i64>) {
     let mut ingredient_range: Vec<(i64, i64)> = Vec::new();
     let mut ingredient_ids: Vec<i64> = Vec::new();
@@ -76,7 +80,7 @@ pub fn merge_ingredient_ranges(ingredient_range: &Vec<(i64, i64)>) -> Vec<(i64, 
     // First element can be added
     merged_ingredient_range.push(ingredient_range[0]);
 
-    for (start, end) in ingredient_range.iter().enumerate() {
+    for (_start, _end) in ingredient_range.iter().enumerate() {
         // Case 1: Start <= First Merged Ingredient
         // Case 1.1: End <= Second Merged Ingredient
         // Replace first merged ingredient with start
