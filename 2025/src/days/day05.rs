@@ -100,16 +100,13 @@ impl<T> Stack<T> for Vec<T> {
 
 /*
 Algorithm:
-1. Sort the vec of tuples. First check first element, if equal use the second element.
-2. Remove duplicates.
-3. Push first tuple onto stack.
-4. Iterate over 1..n tuples.
-    4.1 Check for overlapping ranges.
-    This is the case if the first element of the current tuple is smaller than or equal to
-    the second element of the tuple at the top of the stack. Then overlapping ranges can be merged.
-    The question which second element should be taken (the tuple from the stack or the tuple in the current iteration)
-    is answered by its maximum value.
-    4.2 If no overlap is present, the tuple is pushed to the stack.
+1. Sort the ingredient ranges by their start value.
+2. Initialize an empty stack to hold merged ranges.
+3. Iterate through the sorted ranges:
+   a. If the stack is empty, push the current range onto the stack.
+   b. If the current range overlaps with the top of the stack (i.e., current start falls within or adjacent to the top range), merge them by extending the end of the top range if needed.
+   c. If there is no overlap, push the current range onto the stack as a new range.
+4. The stack will contain the merged ranges, which can be returned as a vector of tuples.
 */
 pub fn merge_ingredient_ranges(ingredient_range: &Vec<(i64, i64)>) -> Vec<(i64, i64)> {
     let mut sorted = ingredient_range.clone();
